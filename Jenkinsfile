@@ -1,44 +1,35 @@
 pipeline {
-    agent any 
-
+    agent any
     environment {
-        // L'ID que tu as créé dans Jenkins pour ton Token GitLab
-        GIT_CREDS = 'GITLAB_TOKEN' 
+        GIT_CREDS = 'GITLAB_TOKEN'
     }
 
     stages {
         stage('Nettoyage') {
-            steps {
-                echo 'Nettoyage de l’espace de travail...'
-                deleteDir()
-            }
+            steps { deleteDir() }
         }
 
         stage('Checkout Code') {
             steps {
-                echo 'Récupération du code depuis GitLab...'
                 git branch: 'main', 
-                    credentialsId: "${GIT_CREDS}", 
+                    credentialsId: '${GITLAB_TOKEN}',
                     url: 'https://gitlab.com/samibaccouche/wordpress_app.git'
             }
         }
 
-        stage('Vérification des fichiers') {
+        stage('Build') {  
             steps {
-                echo 'Liste des fichiers récupérés :'
-                sh 'ls -lh'
-                echo 'Vérification de la présence de la base de données...'
-                sh 'test -f cms_dump.sql && echo "Base de données trouvée !" || echo "Fichier SQL manquant"'
+                sh 'composer install --no-dev'
+                sh 'npm ci'
+                sh 'npm run build'
             }
         }
-    }
-    
-    post {
-        success {
-            echo 'Test réussi ! Jenkins a bien récupéré ton projet.'
-        }
-        failure {
-            echo 'Le test a échoué. Vérifie tes identifiants ou le nom de la branche.'
+        
+        stage('Vérification') {
+            steps {
+                sh 'ls -lh wp-content/themes/'
+                sh 'ls -lh wp-content/plugins/'
+            }
         }
     }
 }
