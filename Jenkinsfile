@@ -25,14 +25,6 @@ pipeline {
                 sh 'ls -R' 
             }
         }
-
-        stage('Build Artifact') {
-            steps {
-                echo 'Préparation du package pour le déploiement...'
-                // On archive les fichiers pour que le pipeline DevOps puisse les récupérer
-                archiveArtifacts artifacts: '**/*', fingerprint: true
-            }
-        }
     }
 
    
