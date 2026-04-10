@@ -35,12 +35,5 @@ pipeline {
         }
     }
 
-    post {
-        success {
-            echo 'Le code est prêt pour la revue DevOps.'
-        }
-        failure {
-            echo 'Erreur détectée. Alice doit corriger son code avant le déploiement.'
-        }
-    }
+   
 }
