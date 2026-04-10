@@ -17,15 +17,5 @@ pipeline {
                 sh 'find . -name "*.php" -exec php -l {} \\;'
             }
         }
-
-        stage('Security Scan') {
-            steps {
-                echo 'Vérification des vulnérabilités connues (Linting)...'
-                // Un simple check de sécurité ou de style
-                sh 'ls -R' 
-            }
-        }
     }
-
-   
 }
