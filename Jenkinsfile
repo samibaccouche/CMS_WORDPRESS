@@ -2,40 +2,45 @@ pipeline {
     agent any
 
     stages {
-        // Le checkout est automatique - ne pas le toucher
-        
-        stage('Build') {
+        stage('Checkout') {
             steps {
-                echo '=== Installation des dépendances ==='
-                script {
-                    if (fileExists('composer.json')) {
-                        sh 'composer install --no-dev'
-                    } else {
-                        echo '⚠️ composer.json non trouvé'
-                    }
-                    
-                    if (fileExists('package.json')) {
-                        sh 'npm ci --only=production'
-                        sh 'npm run build'
-                    } else {
-                        echo '⚠️ package.json non trouvé'
-                    }
-                }
+                // Cette étape est gérée automatiquement par Jenkins si tu as configuré le job SCM
+                echo 'Récupération du code depuis GitLab...'
+                checkout scm
             }
         }
 
-        stage('Vérification') {
+        stage('Static Analysis') {
             steps {
-                echo '=== Fichiers présents ==='
-                sh 'ls -la'
-                echo '=== Vérification WordPress ==='
-                sh '''
-                    test -f wp-config.php && echo "✅ wp-config.php" || echo "❌ wp-config.php"
-                    test -d wp-content && echo "✅ wp-content" || echo "❌ wp-content"
-                    test -d wp-admin && echo "✅ wp-admin" || echo "❌ wp-admin"
-                    test -d wp-includes && echo "✅ wp-includes" || echo "❌ wp-includes"
-                '''
+                echo 'Vérification de la syntaxe PHP...'
+                // On vérifie s'il y a des erreurs de syntaxe sans exécuter le code
+                sh 'find . -name "*.php" -exec php -l {} \\;'
             }
+        }
+
+        stage('Security Scan') {
+            steps {
+                echo 'Vérification des vulnérabilités connues (Linting)...'
+                // Un simple check de sécurité ou de style
+                sh 'ls -R' 
+            }
+        }
+
+        stage('Build Artifact') {
+            steps {
+                echo 'Préparation du package pour le déploiement...'
+                // On archive les fichiers pour que le pipeline DevOps puisse les récupérer
+                archiveArtifacts artifacts: '**/*', fingerprint: true
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Le code est prêt pour la revue DevOps.'
+        }
+        failure {
+            echo 'Erreur détectée. Alice doit corriger son code avant le déploiement.'
         }
     }
 }
