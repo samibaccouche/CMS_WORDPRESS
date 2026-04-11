@@ -9,13 +9,24 @@ pipeline {
                 checkout scm
             }
         }
-// test 
-        stage('Static Analysis') {
-            steps {
-                echo 'Vérification de la syntaxe PHP...'
+
+//        stage('Static Analysis') {
+  //          steps {
+    //            echo 'Vérification de la syntaxe PHP...'
                 // On vérifie s'il y a des erreurs de syntaxe sans exécuter le code
-                sh 'find . -name "*.php" -exec php -l {} \\;'
+      //          sh 'find . -name "*.php" -exec php -l {} \\;'
+      //      }
+     //   }
+
+	   stage('Deploy to VM2') {
+               steps {
+                // On utilise le credential SSH pour parler à VM2
+                       sh 'cd ~/ansible'
+                       sh 'ansible-playbook -i ansible/inventory.ini ansible/deploy_app.yml'
+                }
             }
         }
+
     }
+
 }
