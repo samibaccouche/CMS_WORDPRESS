@@ -9,7 +9,7 @@ pipeline {
                 checkout scm
             }
         }
-
+// test 
         stage('Static Analysis') {
             steps {
                 echo 'Vérification de la syntaxe PHP...'
