@@ -21,7 +21,8 @@ pipeline {
 	   stage('Deploy to VM2') {
                steps {
                 // On utilise le credential SSH pour parler à VM2
-                       sh 'cd ~/ansible'
+                       sh 'sudo su jenkins'
+				   	   sh 'cd ~/ansible'
                        sh 'ansible-playbook -i inventory.ini site.yml'
                 }
             }
