@@ -22,10 +22,10 @@ pipeline {
                steps {
                 // On utilise le credential SSH pour parler à VM2
                        sh 'cd ~/ansible'
-                       sh 'ansible-playbook -i ansible/inventory.ini ansible/deploy_app.yml'
+                       sh 'ansible-playbook -i inventory.ini site.yml'
                 }
             }
-        
+       
 
     }
 
