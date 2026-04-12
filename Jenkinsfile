@@ -1,24 +1,29 @@
 pipeline {
+    agent any
+
     stages {
 
-        stage('Checkout Infra') {
+        stage('Checkout App (DEV)') {
             steps {
-                git url: 'infra-repo'
+                dir('app') {
+                    git branch: 'main', url: 'https://gitlab.com/wordpress_app.git'
+                }
             }
         }
 
-        stage('Checkout App') {
+        stage('Checkout Infra (DEVOPS)') {
             steps {
-                git url: 'app-repo'
+                dir('infra') {
+                    git branch: 'main', url: 'https://gitlab.com/ansible.git'
+                }
             }
         }
 
         stage('Deploy') {
             steps {
                 sh '''
-                pwd 
+                cd infra/ansible
                 ansible-playbook -i inventory.ini site.yml
-                ssh 192.168.56.11
                 '''
             }
         }
