@@ -1,29 +1,15 @@
 pipeline {
-    agent any
-    
     stages {
-        stage('Checkout') {
-            agent any  // Sur VM1 (control-plane)
-            steps { 
-                checkout scm 
+        stage('Build') {
+            steps {
+                echo "Build app"
             }
         }
 
-	stage('Debug') {
-    	    steps {
-            sh 'whoami'
-            sh 'pwd'
-            sh 'ls -la'
+        stage('Trigger Deploy') {
+            steps {
+                build job: 'deploy-pipeline'
+            }
+        }
     }
 }
-
-//        stage('Static Analysis') {
-  //          agent any  // Sur VM1
-    //        steps { 
-      //          sh 'find . -name "*.php" -exec php -l {} \\; | grep -v "No syntax errors" || test $? -eq 1' 
-        //    }
-     //   }
-
-    }
-}
-
