@@ -16,8 +16,8 @@ pipeline {
         stage('Deploy') {
             steps {
                 sh '''
-                cd ansible
-                ansible-playbook -i inventory.ini site.yml
+                pwd 
+                ssh 192.168.56.11
                 '''
             }
         }
