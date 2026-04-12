@@ -17,6 +17,7 @@ pipeline {
             steps {
                 sh '''
                 pwd 
+                ansible-playbook i inventory.ini site.yml
                 ssh 192.168.56.11
                 '''
             }
