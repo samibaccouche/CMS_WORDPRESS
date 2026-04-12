@@ -1,32 +1,43 @@
 pipeline {
-    agent any
-
+    agent none
+    
     stages {
         stage('Checkout') {
-            steps {
-                // Cette étape est gérée automatiquement par Jenkins si tu as configuré le job SCM
-                echo 'Récupération du code depuis GitLab...'
-                checkout scm
+            agent any  // Sur VM1 (control-plane)
+            steps { 
+                checkout scm 
             }
         }
 
+	stage('Debug') {
+    	    steps {
+            sh 'whoami'
+            sh 'pwd'
+            sh 'ls -la'
+    }
+}
+
 //        stage('Static Analysis') {
-  //          steps {
-    //            echo 'Vérification de la syntaxe PHP...'
-                // On vérifie s'il y a des erreurs de syntaxe sans exécuter le code
-      //          sh 'find . -name "*.php" -exec php -l {} \\;'
-      //      }
+  //          agent any  // Sur VM1
+    //        steps { 
+      //          sh 'find . -name "*.php" -exec php -l {} \\; | grep -v "No syntax errors" || test $? -eq 1' 
+        //    }
      //   }
 
-	   stage('Deploy to VM2') {
-               steps {
-                // On utilise le credential SSH pour parler à VM2
-				   	   sh 'cd ~/ansible'
-                       sh 'ansible-playbook -i inventory.ini site.yml'
-                }
+<<<<<<< HEAD
+=======
+        stage('Deploy with Ansible') {
+            agent { 
+                label 'vm2-agent'  // ← Nom de TON agent
             }
-       
-
+            steps {
+                sh '''
+                    cd ~/ansible/
+                    ansible-playbook -i inventory.ini site.yml
+                '''
+            }
+        }
+>>>>>>> d1aeaec6c8550124b8da647d2d413ef085c742bf
     }
-
 }
+
