@@ -1,14 +1,24 @@
 pipeline {
     stages {
-        stage('Build') {
+
+        stage('Checkout Infra') {
             steps {
-                echo "Build app"
+                git url: 'infra-repo'
             }
         }
 
-        stage('Trigger Deploy') {
+        stage('Checkout App') {
             steps {
-                build job: 'deploy-pipeline'
+                git url: 'app-repo'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sh '''
+                cd ansible
+                ansible-playbook -i inventory.ini site.yml
+                '''
             }
         }
     }
