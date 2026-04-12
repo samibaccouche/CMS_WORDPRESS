@@ -24,20 +24,6 @@ pipeline {
         //    }
      //   }
 
-<<<<<<< HEAD
-=======
-        stage('Deploy with Ansible') {
-            agent { 
-                label 'vm2-agent'  // ← Nom de TON agent
-            }
-            steps {
-                sh '''
-                    cd ~/ansible/
-                    ansible-playbook -i inventory.ini site.yml
-                '''
-            }
-        }
->>>>>>> d1aeaec6c8550124b8da647d2d413ef085c742bf
     }
 }
 
