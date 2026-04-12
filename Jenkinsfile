@@ -22,7 +22,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 sh '''
-                cd /ansible
+                cd /infra
                 ansible-playbook -i inventory.ini site.yml
                 '''
             }
