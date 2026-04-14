@@ -10,6 +10,13 @@ pipeline {
                 }
             }
         }
+//        stage('Static Analysis') {
+  //          agent any  // Sur VM1
+    //        steps { 
+      //          sh 'find . -name "*.php" -exec php -l {} \\; | grep -v "No syntax errors" || test $? -eq 1' 
+        //    }
+     //   }
+
 
 
 
