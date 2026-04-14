@@ -18,13 +18,3 @@ pipeline {
      //   }
 
 
-        stage('Deploy') {
-            steps {
-                sh '''
-                cd infra
-                ansible-playbook -i inventory.ini site.yml
-                '''
-            }
-        }
-    }
-}
