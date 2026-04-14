@@ -3,14 +3,6 @@ pipeline {
 
     stages {
 
-        stage('Checkout App (DEV)') {
-            steps {
-                dir('app') {
-                    git branch: 'main', url: 'https://gitlab.com/wordpress_app.git'
-                }
-            }
-        }
-
         stage('Checkout Infra (DEVOPS)') {
             steps {
                 dir('infra') {
@@ -18,6 +10,9 @@ pipeline {
                 }
             }
         }
+
+
+
 
         stage('Deploy') {
             steps {
