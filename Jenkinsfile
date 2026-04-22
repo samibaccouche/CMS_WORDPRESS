@@ -1,30 +1,19 @@
-pipeline {
-    agent any
-
-    stages {
-
-        stage('Checkout Infra (DEVOPS)') {
+stage('SonarQube Analysis') {
             steps {
-                dir('infra') {
-                    git branch: 'main', url: 'https://gitlab.com/ansible.git'
+                script {
+                    // ATTENTION : 'SonarScanner' doit être le NOM EXACT dans Global Tool Configuration
+                    def scannerHome = tool 'SonarScanner' // <--- VERIFIE CE NOM ICI 🔍
+
+                    withSonarQubeEnv("${SONAR_SERVER}") {
+                        // Utilise bien les \ à la fin de chaque ligne sauf la dernière
+                        sh "${scannerHome}/bin/sonar-scanner \
+                            -Dsonar.projectKey=refops-wordpress \
+                            -Dsonar.projectName='PFE WordPress Refops' \
+                            -Dsonar.sources=. \
+                            -Dsonar.language=php \
+                            -Dsonar.sourceEncoding=UTF-8 \
+                            -Dsonar.exclusions=wp-admin/**,wp-includes/**,infra/**,ansible/**,wp-content/plugins/**,wp-content/themes/astra/**,wp-content/themes/twentytwentyfive/**" 
+                    }
                 }
             }
         }
-//        stage('Static Analysis') {
-  //          agent any  // Sur VM1
-    //        steps { 
-      //          sh 'find . -name "*.php" -exec php -l {} \\; | grep -v "No syntax errors" || test $? -eq 1' 
-        //    }
-     //   }
-
-
-        stage('Deploy') {
-            steps {
-                sh '''
-                cd infra
-                ansible-playbook -i inventory.ini site.yml
-                '''
-            }
-        }
-    }
-}
