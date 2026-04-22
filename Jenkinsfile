@@ -9,7 +9,7 @@ stage('SonarQube Analysis') {
                             -Dsonar.sources=. \
                             -Dsonar.language=php \
                             -Dsonar.sourceEncoding=UTF-8 \
-                            -Dsonar.exclusions=wp-admin/**,wp-includes/**,infra/**,ansible/**,wp-content/plugins/**,wp-content/themes/astra/**,wp-content/themes/twentytwentyfive/**,wp-content/uploads/**"
+                            -Dsonar.exclusions=wp-admin/**,wp-includes/**,infra/**,ansible/**,wp-content/plugins/**,wp-content/themes/astra/**,wp-content/themes/twentytwentyfive/**"
                     }
                 }
             }
