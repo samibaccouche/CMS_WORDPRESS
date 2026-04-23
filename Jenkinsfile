@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        // Définit le nom de l'installation SonarQube configurée dans Jenkins System
+        // Nom du serveur configuré dans Jenkins > System
         SONAR_SERVER = 'sonaranalyse'
     }
 
@@ -17,7 +17,7 @@ pipeline {
 
         stage('Static Analysis') {
             steps {
-                // Vérification syntaxique PHP rapide
+                // Vérification syntaxique PHP
                 sh 'find . -name "*.php" -exec php -l {} \\; | grep -v "No syntax errors" || test $? -eq 1'
             }
         }
@@ -28,7 +28,6 @@ pipeline {
                     // Récupère le scanner configuré dans Global Tool Configuration
                     def scannerHome = tool 'sonarqube'
 
-                    // Utilise l'environnement SonarQube (Token + URL)
                     withSonarQubeEnv("${SONAR_SERVER}") {
                         sh "${scannerHome}/bin/sonar-scanner \
                             -Dsonar.projectKey=refops-wordpress \
@@ -44,12 +43,24 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sh '''
-                cd infra
-                ansible-playbook -i inventory.ini site.yml
-                '''
+                // Exécution du playbook Ansible
+                dir('infra') {
+                    sh 'ansible-playbook -i inventory.ini site.yml'
+                }
             }
         }
     }
-}
 
+    post {
+        success {
+            mail to: 'baccouchesami499@gmail.com',
+                 subject: "✅ Build Success: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                 body: "Le pipeline a réussi ! WordPress est déployé et l'analyse SonarQube est disponible."
+        }
+        failure {
+            mail to: 'baccouchesami499@gmail.com',
+                 subject: "❌ Build Failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                 body: "Le pipeline a échoué. Vérifie les logs sur Jenkins pour corriger l'erreur."
+        }
+    }
+}
